@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 router.get('/another', (req, res) => res.json({ route: req.originalUrl }));
 router.post('/', verifyJWT);
 
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/.netlify/functions/server', router);  // path must route to lambda
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
