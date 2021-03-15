@@ -56,7 +56,7 @@ const verifyJWT = (req, res, next) => {
   res.json(resp_msg)
 }
 
-app.post('/', verifyJWT);
+app.post('/token', verifyJWT);
 
 app.use(function(err, req, res, next) {
   let code = err.code || 500;
