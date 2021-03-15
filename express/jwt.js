@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const secret = 'MDkxNmZmYjh'
 
 module.exports = function verifyJWT (req, res, next) {
   let headers = req.headers
@@ -13,7 +14,6 @@ module.exports = function verifyJWT (req, res, next) {
   }
   if (auth) {
     let token = auth.indexOf('Bearer') > -1 ? auth.substring(auth.indexOf('Bearer') + 7):auth
-    // let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJpbmdfYWRtaW5AeW9wbWFpbC5jb20iLCJleHAiOiIxNTgyMDgzNTM3IiwiaWF0IjoiMTU4MTk5NzEzNyIsImp0aSI6ImQ0N2UwMDZhLTVlN2YtNGY1My1hNDhjLWVkMGE4NWFlYjQ5NCIsIm9yZ19pZCI6IlBXSmlMTUNkWnRTOU9LWEM2ZDg4Sk9FIn0.ur4_Lo6iSrqbA55jEqaUN0ZGYnOlKChpFBLT70KuQ2o'
     if (token) {
       token = token.trim()
     }
@@ -24,7 +24,7 @@ module.exports = function verifyJWT (req, res, next) {
       resp_msg.jwt = {}
       resp_msg.jwt.payload = jwt.decode(token)
       try {
-        let verifyRet = jwt.verify(token, config.client_secret, {ignoreExpiration: true})
+        let verifyRet = jwt.verify(token, secret, {ignoreExpiration: true})
         verifyRet && (resp_msg.jwt.verification_result = {status: 'Valid'})
       } catch (e) {
         resp_msg.jwt.verification_result = {status: 'Invalid', error_msg: e}
@@ -37,8 +37,8 @@ module.exports = function verifyJWT (req, res, next) {
     }
 
   } else {
-    resp_msg.status = "ERROR",
-      resp_msg.message = "Authorization not found in request header"
+    resp_msg.status = "ERROR"
+    resp_msg.message = "Authorization not found in request header"
   }
   res.json(resp_msg)
 }
