@@ -5,13 +5,6 @@ const serverless = require('serverless-http');
 const app = express();
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-const config = {
-  //baz: MEP V6 Client
-  //sysadmin->/#/partner/edit/QhYm3mFe6VXpA2Go3hcjt10/app/edit/WadjkuvrW9eFJOjuwAwElW2
-  client_secret: 'MDkxNmZmYjh'
-}
-
-app.use(bodyParser.urlencoded({ extended: false }));
 
 const verifyJWT = (req, res, next) => {
   let headers = req.headers
@@ -56,14 +49,17 @@ const verifyJWT = (req, res, next) => {
   res.json(resp_msg)
 }
 
-app.post('/token', verifyJWT);
-
-app.use(function(err, req, res, next) {
-  let code = err.code || 500;
-  let message = err.message;
-  res.writeHead(code, message, {'content-type' : 'application/json'});
-  res.end(err);
+const router = express.Router();
+router.get('/', (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.write('<h1>Hello from Express.js!</h1>');
+  res.end();
 });
+router.get('/another', (req, res) => res.json({ route: req.originalUrl }));
+router.post('/', verifyJWT);
+
+app.use(bodyParser.json());
+app.use('/', router);  // path must route to lambda
 
 module.exports = app;
 module.exports.handler = serverless(app);
